@@ -16,6 +16,7 @@ public class BoardGamesGUI extends JFrame {
     private JButton saveBtn;
     private final List<BoardGame> BGList = new ArrayList<>();
     private int index;
+    private final int[] selectedScore = {1};
 
     public BoardGame getBG(int i){
         return BGList.get(i);
@@ -25,6 +26,9 @@ public class BoardGamesGUI extends JFrame {
         btnGroup.add(RB1);
         btnGroup.add(RB2);
         btnGroup.add(RB3);
+        RB1.addItemListener(e -> handleRadioButtonClick(1));
+        RB2.addItemListener(e -> handleRadioButtonClick(2));
+        RB3.addItemListener(e -> handleRadioButtonClick(3));
 
         index = 0;
         prevBtn.addActionListener(e -> {
@@ -39,6 +43,7 @@ public class BoardGamesGUI extends JFrame {
                 displayBG(getBG(index));
             }
         });
+        saveBtn.addActionListener(e -> saveToFile());
         readingFromFIle();
         displayBG(getBG(index));
     }
@@ -57,6 +62,25 @@ public class BoardGamesGUI extends JFrame {
             System.err.println("File not found: " + e.getLocalizedMessage());
         } catch (NumberFormatException e) {
             System.err.println("Wrongly formated number: " + e.getLocalizedMessage());
+        }
+    }
+    private void handleRadioButtonClick(int score) {
+        selectedScore[0] = score;
+    }
+    public void saveToFile() {
+        int selectedIndex = index;
+        BoardGame selectedBG = BGList.get(selectedIndex);
+        selectedBG.setName(txtName.getText());
+        selectedBG.setOwned(CBOwned.isSelected());
+        selectedBG.setScore(selectedScore[0]);
+
+        try (PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter("deskovky.txt")))) {
+            for (BoardGame bg : BGList) {
+                writer.println(bg.getName() + ";" + (bg.isOwned() ? "owned" : "not owned") + ";" + bg.getScore());
+            }
+            JOptionPane.showMessageDialog(this, "Changes saved to file.", "Message saved", JOptionPane.INFORMATION_MESSAGE);
+        } catch (IOException e) {
+            System.err.println("Error writing to file: " + e.getLocalizedMessage());
         }
     }
     public void displayBG(BoardGame bg){

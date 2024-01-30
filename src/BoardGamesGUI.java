@@ -61,7 +61,7 @@ public class BoardGamesGUI extends JFrame {
         } catch (FileNotFoundException e) {
             System.err.println("File not found: " + e.getLocalizedMessage());
         } catch (NumberFormatException e) {
-            System.err.println("Wrongly formated number: " + e.getLocalizedMessage());
+            System.err.println("Wrongly formatted number: " + e.getLocalizedMessage());
         }
     }
     private void handleRadioButtonClick(int score) {

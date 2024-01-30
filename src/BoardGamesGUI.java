@@ -68,8 +68,7 @@ public class BoardGamesGUI extends JFrame {
         selectedScore[0] = score;
     }
     public void saveToFile() {
-        int selectedIndex = index;
-        BoardGame selectedBG = BGList.get(selectedIndex);
+        BoardGame selectedBG = BGList.get(index);
         selectedBG.setName(txtName.getText());
         selectedBG.setOwned(CBOwned.isSelected());
         selectedBG.setScore(selectedScore[0]);
@@ -95,7 +94,7 @@ public class BoardGamesGUI extends JFrame {
     public static void main(String[] args) {
         BoardGamesGUI bgGUI = new BoardGamesGUI();
         bgGUI.setContentPane(bgGUI.panel);
-        bgGUI.setSize(500, 700);
+        bgGUI.setSize(300, 300);
         bgGUI.setDefaultCloseOperation(EXIT_ON_CLOSE);
         bgGUI.setTitle("Board Games");
         bgGUI.setVisible(true);

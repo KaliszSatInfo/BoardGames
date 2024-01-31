@@ -15,7 +15,7 @@ public class BoardGamesGUI extends JFrame {
     private JButton nxtBtn;
     private JButton saveBtn;
     private final List<BoardGame> BGList = new ArrayList<>();
-    private int index;
+    private int index = 0;
     private final int[] selectedScore = {1};
 
     public BoardGame getBG(int i){
@@ -30,7 +30,6 @@ public class BoardGamesGUI extends JFrame {
         RB2.addItemListener(e -> handleRadioButtonClick(2));
         RB3.addItemListener(e -> handleRadioButtonClick(3));
 
-        index = 0;
         prevBtn.addActionListener(e -> {
             if (index > 0){
                 index--;

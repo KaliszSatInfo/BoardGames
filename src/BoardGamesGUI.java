@@ -21,7 +21,6 @@ public class BoardGamesGUI extends JFrame {
     public BoardGame getBG(int i){
         return BGList.get(i);
     }
-
     public List<BoardGame> getBGList(){
         return BGList;
     }

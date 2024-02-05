@@ -21,6 +21,10 @@ public class BoardGamesGUI extends JFrame {
     public BoardGame getBG(int i){
         return BGList.get(i);
     }
+
+    public List<BoardGame> getBGList(){
+        return BGList;
+    }
     public BoardGamesGUI() {
         ButtonGroup btnGroup = new ButtonGroup();
         btnGroup.add(RB1);
@@ -45,7 +49,11 @@ public class BoardGamesGUI extends JFrame {
         });
         saveBtn.addActionListener(e -> saveToFile());
         readingFromFIle();
-        displayBG(getBG(index));
+        if (!getBGList().isEmpty()){
+            displayBG(getBG(index));
+        } else {
+            JOptionPane.showMessageDialog(this, "There is nothing in the list", "Error", JOptionPane.INFORMATION_MESSAGE);
+        }
     }
     public void readingFromFIle() {
         try (Scanner sc = new Scanner(new BufferedReader(new FileReader("deskovky.txt")))) {

@@ -1,12 +1,12 @@
 public class BoardGame {
     private String name;
     private boolean owned;
-    private int score;
+    private int rating;
 
-    public BoardGame(String name, boolean owned, int score) {
+    public BoardGame(String name, boolean owned, int rating) {
         this.name = name;
         this.owned = owned;
-        this.score = score;
+        this.rating = rating;
     }
 
     public String getName() {
@@ -25,11 +25,11 @@ public class BoardGame {
         this.owned = owned;
     }
 
-    public int getScore() {
-        return score;
+    public int getRating() {
+        return rating;
     }
 
-    public void setScore(int score) {
-        this.score = score;
+    public void setRating(int rating) {
+        this.rating = rating;
     }
 }

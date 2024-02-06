@@ -4,34 +4,36 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-public class BoardGamesGUI extends JFrame {
+public class BoardGameFrame extends JFrame {
     private JPanel panel;
     private JTextField txtName;
     private JCheckBox CBOwned;
-    private JRadioButton RB1;
-    private JRadioButton RB2;
-    private JRadioButton RB3;
+    private JRadioButton rb1;
+    private JRadioButton rb2;
+    private JRadioButton rb3;
     private JButton prevBtn;
     private JButton nxtBtn;
     private JButton saveBtn;
-    private final List<BoardGame> BGList = new ArrayList<>();
     private int index = 0;
-    private final int[] selectedScore = {1};
+    private int selectedRating;
+    private final List<BoardGame> BGList = new ArrayList<>();
 
     public BoardGame getBG(int i){
         return BGList.get(i);
     }
-    public List<BoardGame> getBGList(){
-        return BGList;
-    }
-    public BoardGamesGUI() {
+    public BoardGameFrame() {
+        setContentPane(panel);
+        setSize(300, 300);
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setTitle("Board Games");
+
         ButtonGroup btnGroup = new ButtonGroup();
-        btnGroup.add(RB1);
-        btnGroup.add(RB2);
-        btnGroup.add(RB3);
-        RB1.addItemListener(e -> handleRadioButtonClick(1));
-        RB2.addItemListener(e -> handleRadioButtonClick(2));
-        RB3.addItemListener(e -> handleRadioButtonClick(3));
+        btnGroup.add(rb1);
+        btnGroup.add(rb2);
+        btnGroup.add(rb3);
+        rb1.addItemListener(e -> handleRadioButtonClick(1));
+        rb2.addItemListener(e -> handleRadioButtonClick(2));
+        rb3.addItemListener(e -> handleRadioButtonClick(3));
 
         prevBtn.addActionListener(e -> {
             if (index > 0){
@@ -47,7 +49,7 @@ public class BoardGamesGUI extends JFrame {
         });
         saveBtn.addActionListener(e -> saveToFile());
         readingFromFIle();
-        if (!getBGList().isEmpty()){
+        if (!BGList.isEmpty()){
             displayBG(getBG(index));
         } else {
             JOptionPane.showMessageDialog(this, "There is nothing in the list", "Error", JOptionPane.INFORMATION_MESSAGE);
@@ -60,8 +62,8 @@ public class BoardGamesGUI extends JFrame {
                 String[] parts = line.split(";");
                 String name = (parts[0]);
                 boolean owned = parts[1].equals("owned");
-                int score = Integer.parseInt(parts[2]);
-                BoardGame bg = new BoardGame(name, owned, score);
+                int rating = Integer.parseInt(parts[2]);
+                BoardGame bg = new BoardGame(name, owned, rating);
                 BGList.add(bg);
             }
         } catch (FileNotFoundException e) {
@@ -70,18 +72,18 @@ public class BoardGamesGUI extends JFrame {
             System.err.println("Wrongly formatted number: " + e.getLocalizedMessage());
         }
     }
-    private void handleRadioButtonClick(int score) {
-        selectedScore[0] = score;
+    private void handleRadioButtonClick(int rating) {
+        selectedRating = rating;
     }
     public void saveToFile() {
         BoardGame selectedBG = BGList.get(index);
         selectedBG.setName(txtName.getText());
         selectedBG.setOwned(CBOwned.isSelected());
-        selectedBG.setScore(selectedScore[0]);
+        selectedBG.setRating(selectedRating);
 
         try (PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter("deskovky.txt")))) {
             for (BoardGame bg : BGList) {
-                writer.println(bg.getName() + ";" + (bg.isOwned() ? "owned" : "not owned") + ";" + bg.getScore());
+                writer.println(bg.getName() + ";" + (bg.isOwned() ? "owned" : "not owned") + ";" + bg.getRating());
             }
             JOptionPane.showMessageDialog(this, "Changes saved to file.", "Message saved", JOptionPane.INFORMATION_MESSAGE);
         } catch (IOException e) {
@@ -91,18 +93,14 @@ public class BoardGamesGUI extends JFrame {
     public void displayBG(BoardGame bg){
         txtName.setText(bg.getName());
         CBOwned.setSelected(bg.isOwned());
-        switch (bg.getScore()){
-            case 1 -> RB1.setSelected(true);
-            case 2 -> RB2.setSelected(true);
-            case 3 -> RB3.setSelected(true);
+        switch (bg.getRating()){
+            case 1 -> rb1.setSelected(true);
+            case 2 -> rb2.setSelected(true);
+            case 3 -> rb3.setSelected(true);
         }
     }
-    public static void main(String[] args) {
-        BoardGamesGUI bgGUI = new BoardGamesGUI();
-        bgGUI.setContentPane(bgGUI.panel);
-        bgGUI.setSize(300, 300);
-        bgGUI.setDefaultCloseOperation(EXIT_ON_CLOSE);
-        bgGUI.setTitle("Board Games");
-        bgGUI.setVisible(true);
+    public static void  main(String[] args) {
+        BoardGameFrame BGFrame = new BoardGameFrame();
+        BGFrame.setVisible(true);
     }
 }

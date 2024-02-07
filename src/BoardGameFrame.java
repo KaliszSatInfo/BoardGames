@@ -14,6 +14,8 @@ public class BoardGameFrame extends JFrame {
     private JButton prevBtn;
     private JButton nxtBtn;
     private JButton saveBtn;
+    private JButton deleteButton;
+    private JButton addButton;
     private int index = 0;
     private int selectedRating;
     private final List<BoardGame> BGList = new ArrayList<>();
@@ -40,12 +42,20 @@ public class BoardGameFrame extends JFrame {
                 index--;
                 displayBG(getBG(index));
             }
+            controlButtons();
         });
         nxtBtn.addActionListener(e -> {
             if (index < BGList.size() - 1) {
                 index++;
                 displayBG(getBG(index));
             }
+            controlButtons();
+        });
+        deleteButton.addActionListener(e -> deleteGame());
+        addButton.addActionListener(e -> {
+            txtName.setText("");
+            addNewGame(txtName.getText(), false, 0);
+            index++;
         });
         saveBtn.addActionListener(e -> saveToFile());
         readingFromFIle();
@@ -67,9 +77,9 @@ public class BoardGameFrame extends JFrame {
                 BGList.add(bg);
             }
         } catch (FileNotFoundException e) {
-            System.err.println("File not found: " + e.getLocalizedMessage());
+            JOptionPane.showMessageDialog(this, "Soubor nenalezen: " + e.getLocalizedMessage());
         } catch (NumberFormatException e) {
-            System.err.println("Wrongly formatted number: " + e.getLocalizedMessage());
+            JOptionPane.showMessageDialog(this, "Wrongly formatted number: " + e.getLocalizedMessage());
         }
     }
     private void handleRadioButtonClick(int rating) {
@@ -80,15 +90,8 @@ public class BoardGameFrame extends JFrame {
         selectedBG.setName(txtName.getText());
         selectedBG.setOwned(CBOwned.isSelected());
         selectedBG.setRating(selectedRating);
-
-        try (PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter("deskovky.txt")))) {
-            for (BoardGame bg : BGList) {
-                writer.println(bg.getName() + ";" + (bg.isOwned() ? "owned" : "not owned") + ";" + bg.getRating());
-            }
-            JOptionPane.showMessageDialog(this, "Changes saved to file.", "Message saved", JOptionPane.INFORMATION_MESSAGE);
-        } catch (IOException e) {
-            System.err.println("Error writing to file: " + e.getLocalizedMessage());
-        }
+        WriteIntoFile();
+        JOptionPane.showMessageDialog(this, "Saved Game");
     }
     public void displayBG(BoardGame bg){
         txtName.setText(bg.getName());
@@ -98,6 +101,36 @@ public class BoardGameFrame extends JFrame {
             case 2 -> rb2.setSelected(true);
             case 3 -> rb3.setSelected(true);
         }
+    }
+
+    public void addNewGame(String name, boolean owned, int rating){
+        BoardGame newBG = new BoardGame(name, owned, rating);
+        newBG.setName(txtName.getText());
+        newBG.setOwned(CBOwned.isSelected());
+        newBG.setRating(selectedRating);
+        BGList.add(new BoardGame(name, owned, rating));
+        JOptionPane.showMessageDialog(this, "New Game added");
+        WriteIntoFile();
+    }
+
+    public void deleteGame(){
+        if(!BGList.isEmpty()) BGList.remove(index);
+        JOptionPane.showMessageDialog(this, "Game has been deleted");
+        WriteIntoFile();
+    }
+
+    public void WriteIntoFile(){
+        try (PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter("deskovky.txt")))) {
+            for (BoardGame bg : BGList) {
+                writer.print(bg.getName() + ";" + (bg.isOwned() ? "owned" : "not owned") + ";" + bg.getRating() + "\n");
+            }
+        } catch (IOException e) {
+            System.err.println("Error writing to file: " + e.getLocalizedMessage());
+        }
+    }
+    public void controlButtons(){
+        prevBtn.setEnabled(index != 0);
+        nxtBtn.setEnabled(index != BGList.size() - 1);
     }
     public static void  main(String[] args) {
         BoardGameFrame BGFrame = new BoardGameFrame();

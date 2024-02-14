@@ -1,8 +1,6 @@
 import javax.swing.*;
 import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 public class BoardGameFrame extends JFrame {
     private JPanel panel;
@@ -28,6 +26,8 @@ public class BoardGameFrame extends JFrame {
         setSize(300, 300);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setTitle("Board Games");
+
+        initMenu();
 
         ButtonGroup btnGroup = new ButtonGroup();
         btnGroup.add(rb1);
@@ -59,11 +59,11 @@ public class BoardGameFrame extends JFrame {
         });
         saveBtn.addActionListener(e -> saveToFile());
         readingFromFIle();
-        if (!BGList.isEmpty()){
+        /**if (!BGList.isEmpty()){
             displayBG(getBG(index));
         } else {
             JOptionPane.showMessageDialog(this, "There is nothing in the list", "Error", JOptionPane.INFORMATION_MESSAGE);
-        }
+        }*/
     }
     public void readingFromFIle() {
         try (Scanner sc = new Scanner(new BufferedReader(new FileReader("deskovky.txt")))) {
@@ -135,5 +135,62 @@ public class BoardGameFrame extends JFrame {
     public static void  main(String[] args) {
         BoardGameFrame BGFrame = new BoardGameFrame();
         BGFrame.setVisible(true);
+    }
+
+    private void initMenu(){
+        JMenuBar jMenuBar = new JMenuBar();
+        setJMenuBar(jMenuBar);
+
+        JMenu fileMenu = new JMenu("File");
+        jMenuBar.add(fileMenu);
+
+        JMenuItem loadItem = new JMenuItem("Load");
+        fileMenu.add(loadItem);
+        loadItem.addActionListener(e -> {
+            if (!BGList.isEmpty()){
+                displayBG(getBG(index));
+            } else {
+                JOptionPane.showMessageDialog(this, "There is nothing in the list", "Error", JOptionPane.INFORMATION_MESSAGE);
+            }
+        });
+
+        JMenuItem saveItem = new JMenuItem("Save");
+        fileMenu.add(saveItem);
+        saveItem.addActionListener(e -> {
+            saveToFile();
+        });
+
+        JMenu actionMenu = new JMenu("Action");
+        jMenuBar.add(actionMenu);
+
+        JMenuItem addItem = new JMenuItem("Add");
+        actionMenu.add(addItem);
+        addItem.addActionListener(e -> {
+            txtName.setText("");
+            addNewGame(txtName.getText(), false, 0);
+            index++;
+        });
+
+        JMenuItem deleteItem = new JMenuItem("Delete");
+        actionMenu.add(deleteItem);
+        deleteItem.addActionListener (e -> {
+            deleteGame();
+        });
+
+        JMenuItem sortItems = new JMenuItem("Sort");
+        actionMenu.add(sortItems);
+        sortItems.addActionListener(e -> sortAlphabetically());
+
+        JMenu summaryMenu = new JMenu("Summary");
+        jMenuBar.add(summaryMenu);
+    }
+
+    private void sortAlphabetically() {
+        index = 0;
+        if (!BGList.isEmpty()) {
+            displayBG(getBG(index));
+        } else {
+            JOptionPane.showMessageDialog(this, "There is nothing in the list", "Error", JOptionPane.INFORMATION_MESSAGE);
+        }
     }
 }

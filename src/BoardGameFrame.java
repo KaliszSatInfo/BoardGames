@@ -65,7 +65,7 @@ public class BoardGameFrame extends JFrame {
         saveBtn.addActionListener(e -> saveToFile());
         saveBtn.setEnabled(false);
         readingFromFIle();
-        /**if (!BGList.isEmpty()){
+        /*if (!BGList.isEmpty()){
             displayBG(getBG(index));
         } else {
             JOptionPane.showMessageDialog(this, "There is nothing in the list", "Error", JOptionPane.INFORMATION_MESSAGE);
@@ -162,9 +162,7 @@ public class BoardGameFrame extends JFrame {
 
         JMenuItem saveItem = new JMenuItem("Save");
         fileMenu.add(saveItem);
-        saveItem.addActionListener(e -> {
-            saveToFile();
-        });
+        saveItem.addActionListener(e -> saveToFile());
 
         JMenu actionMenu = new JMenu("Action");
         jMenuBar.add(actionMenu);
@@ -179,9 +177,7 @@ public class BoardGameFrame extends JFrame {
 
         JMenuItem deleteItem = new JMenuItem("Delete");
         actionMenu.add(deleteItem);
-        deleteItem.addActionListener (e -> {
-            deleteGame();
-        });
+        deleteItem.addActionListener (e -> deleteGame());
 
         JMenuItem sortItems = new JMenuItem("Sort alphabetically");
         actionMenu.add(sortItems);

@@ -21,7 +21,7 @@ public class BoardGameFrame extends JFrame {
     private int selectedRating;
     private final List<BoardGame> BGList = new ArrayList<>();
 
-    public BoardGame getBG(int i){
+    public BoardGame getBG(int i) {
         return BGList.get(i);
     }
     public BoardGameFrame() {
@@ -41,7 +41,7 @@ public class BoardGameFrame extends JFrame {
         rb3.addItemListener(e -> handleRadioButtonClick(3));
 
         prevBtn.addActionListener(e -> {
-            if (index > 0){
+            if (index > 0) {
                 index--;
                 displayBG(getBG(index));
             }
@@ -65,11 +65,6 @@ public class BoardGameFrame extends JFrame {
         saveBtn.addActionListener(e -> saveToFile());
         saveBtn.setEnabled(false);
         readingFromFIle();
-        /*if (!BGList.isEmpty()){
-            displayBG(getBG(index));
-        } else {
-            JOptionPane.showMessageDialog(this, "There is nothing in the list", "Error", JOptionPane.INFORMATION_MESSAGE);
-        }*/
     }
     public void readingFromFIle() {
         try (Scanner sc = new Scanner(new BufferedReader(new FileReader("deskovky.txt")))) {
@@ -99,33 +94,27 @@ public class BoardGameFrame extends JFrame {
         WriteIntoFile();
         JOptionPane.showMessageDialog(this, "Saved Game");
     }
-    public void displayBG(BoardGame bg){
+    public void displayBG(BoardGame bg) {
         txtName.setText(bg.getName());
         CBOwned.setSelected(bg.isOwned());
-        switch (bg.getRating()){
+        switch (bg.getRating()) {
             case 1 -> rb1.setSelected(true);
             case 2 -> rb2.setSelected(true);
             case 3 -> rb3.setSelected(true);
         }
     }
-
-    public void addNewGame(String name, boolean owned, int rating){
+    public void addNewGame(String name, boolean owned, int rating) {
         BoardGame newBG = new BoardGame(name, owned, rating);
-        newBG.setName(txtName.getText());
-        newBG.setOwned(CBOwned.isSelected());
-        newBG.setRating(selectedRating);
-        BGList.add(new BoardGame(name, owned, rating));
+        BGList.add(newBG);
         JOptionPane.showMessageDialog(this, "New Game added");
         WriteIntoFile();
     }
-
-    public void deleteGame(){
+    public void deleteGame() {
         if(!BGList.isEmpty()) BGList.remove(index);
         JOptionPane.showMessageDialog(this, "Game has been deleted");
         WriteIntoFile();
     }
-
-    public void WriteIntoFile(){
+    public void WriteIntoFile() {
         try (PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter("deskovky.txt")))) {
             for (BoardGame bg : BGList) {
                 writer.print(bg.getName() + ";" + (bg.isOwned() ? "owned" : "not owned") + ";" + bg.getRating() + "\n");
@@ -134,7 +123,7 @@ public class BoardGameFrame extends JFrame {
             System.err.println("Error writing to file: " + e.getLocalizedMessage());
         }
     }
-    public void controlButtons(){
+    public void controlButtons() {
         prevBtn.setEnabled(index != 0);
         nxtBtn.setEnabled(index != BGList.size() - 1);
     }
@@ -142,8 +131,7 @@ public class BoardGameFrame extends JFrame {
         BoardGameFrame BGFrame = new BoardGameFrame();
         BGFrame.setVisible(true);
     }
-
-    private void initMenu(){
+    private void initMenu() {
         JMenuBar jMenuBar = new JMenuBar();
         setJMenuBar(jMenuBar);
 
@@ -153,7 +141,7 @@ public class BoardGameFrame extends JFrame {
         JMenuItem loadItem = new JMenuItem("Load");
         fileMenu.add(loadItem);
         loadItem.addActionListener(e -> {
-            if (!BGList.isEmpty()){
+            if (!BGList.isEmpty()) {
                 displayBG(getBG(index));
             } else {
                 JOptionPane.showMessageDialog(this, "There is nothing in the list", "Error", JOptionPane.INFORMATION_MESSAGE);
@@ -183,8 +171,9 @@ public class BoardGameFrame extends JFrame {
         actionMenu.add(sortItems);
         sortItems.addActionListener(e -> sortAlphabetically());
 
-        JMenu summaryMenu = new JMenu("Summary");
+        JMenuItem summaryMenu = new JMenuItem("Summary");
         jMenuBar.add(summaryMenu);
+        summaryMenu.addActionListener(e -> displaySummary());
     }
     private static final Collator collator = Collator.getInstance(new Locale("cs", "CZ"));
     private void sortAlphabetically() {
@@ -196,9 +185,34 @@ public class BoardGameFrame extends JFrame {
             JOptionPane.showMessageDialog(this, "There is nothing in the list", "Error", JOptionPane.INFORMATION_MESSAGE);
         }
     }
-    static class SortAlphabetically implements Comparator<BoardGame>{
+    static class SortAlphabetically implements Comparator<BoardGame> {
         public int compare(BoardGame a, BoardGame b) {
             return collator.compare(a.getName(), b.getName());
         }
+    }
+    private void displaySummary() {
+        JOptionPane.showMessageDialog(this,
+                "Number of games in a list: " + BGList.size() + "\n" +
+                        "Favorite games: " + highestRatedGames() + "\n" +
+                        "Number of owned games: " + ownedGames(),
+                "Summary", JOptionPane.INFORMATION_MESSAGE);
+    }
+    private int ownedGames() {
+        int count = 0;
+        for (BoardGame bg : BGList) {
+            if (bg.isOwned()) {
+                count++;
+            }
+        }
+        return count;
+    }
+    private int highestRatedGames() {
+        int count = 0;
+        for (BoardGame bg : BGList) {
+            if (bg.getRating() == 3) {
+                count++;
+            }
+        }
+        return count;
     }
 }

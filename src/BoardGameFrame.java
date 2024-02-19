@@ -1,6 +1,9 @@
 import javax.swing.*;
 import java.io.*;
 import java.util.*;
+import java.text.Collator;
+import java.util.Comparator;
+import java.util.Locale;
 
 public class BoardGameFrame extends JFrame {
     private JPanel panel;
@@ -52,12 +55,15 @@ public class BoardGameFrame extends JFrame {
             controlButtons();
         });
         deleteButton.addActionListener(e -> deleteGame());
+        deleteButton.setEnabled(false);
         addButton.addActionListener(e -> {
             txtName.setText("");
             addNewGame(txtName.getText(), false, 0);
             index++;
         });
+        addButton.setEnabled(false);
         saveBtn.addActionListener(e -> saveToFile());
+        saveBtn.setEnabled(false);
         readingFromFIle();
         /**if (!BGList.isEmpty()){
             displayBG(getBG(index));
@@ -177,20 +183,26 @@ public class BoardGameFrame extends JFrame {
             deleteGame();
         });
 
-        JMenuItem sortItems = new JMenuItem("Sort");
+        JMenuItem sortItems = new JMenuItem("Sort alphabetically");
         actionMenu.add(sortItems);
         sortItems.addActionListener(e -> sortAlphabetically());
 
         JMenu summaryMenu = new JMenu("Summary");
         jMenuBar.add(summaryMenu);
     }
-
+    private static final Collator collator = Collator.getInstance(new Locale("cs", "CZ"));
     private void sortAlphabetically() {
         index = 0;
         if (!BGList.isEmpty()) {
+            BGList.sort(new SortAlphabetically());
             displayBG(getBG(index));
         } else {
             JOptionPane.showMessageDialog(this, "There is nothing in the list", "Error", JOptionPane.INFORMATION_MESSAGE);
+        }
+    }
+    static class SortAlphabetically implements Comparator<BoardGame>{
+        public int compare(BoardGame a, BoardGame b) {
+            return collator.compare(a.getName(), b.getName());
         }
     }
 }

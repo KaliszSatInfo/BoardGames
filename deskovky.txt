@@ -1,4 +1,4 @@
-Vrchcáby;not owned;1
 Člověče nezlob se;owned;2
-Terra Mystica;owned;3
 Kanasta;owned;3
+Terra Mystica;owned;3
+Vrchcáby;not owned;1
